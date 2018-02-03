@@ -4,5 +4,21 @@ class Post < ActiveRecord::Base
   has_many :comments
   has_many :users, through: :comments
 
+  accepts_nested_attributes_for :categories
+
+  def category_ids=(ids)
+    ids.each do |id|
+      category = Category.find_or_create_by(id) unless id.nil?
+      self.categories << category if !self.categories.include?(category)
+    end
+  end
+
+
+  def categories_attributes=(category_attributes)
+    category_attributes.values.each do |category_attribute|
+      category = Category.find_or_create_by(category_attribute) unless category_attribute[:name].nil?
+      self.categories << category if category
+    end
+  end
 
 end
